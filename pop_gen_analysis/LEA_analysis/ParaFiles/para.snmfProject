@@ -1,0 +1,12 @@
+new("snmfProject"
+    , snmfProject.file = "para.snmfProject"
+    , projDir = "C:/Users/Audrey McCombs/Desktop/ParnassiusGenetics/analysis/LEA_analysis/ParaFiles/"
+    , snmfDir = "para.snmf/"
+    , input.file = "para.geno"
+    , runs = list()
+    , K = 3L
+    , snmfClass.files = "K3/run1/para_r1.3.snmfClass"
+    , n = 146L
+    , L = 1001L
+    , creationTime = structure(1520364287.81331, class = c("POSIXct", "POSIXt"))
+)
