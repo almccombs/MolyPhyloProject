@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+data/parnassius_clodius_unfiltered_notimputed.vcf
+data/parnassius_clodius_unfiltered_notimputed.gds
+data/parnassius_clodius_filtered_notimputed.vcf
+data/parnassius_clodius_filtered_notimputed.gds
