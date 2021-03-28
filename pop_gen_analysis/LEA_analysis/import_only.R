@@ -60,7 +60,7 @@ read.vcf.markerstats3 <- function(filename,max.marker) {
 
 
 ##command for Parnassius clodius data file, number is arbitrary but large
-dat3 <- read.vcf.markerstats3(filename='SNPdata/parnassius_clodius_unfiltered_imputed.vcf',10000) 
+dat3 <- read.vcf.markerstats3(filename='data/parnassius_clodius_unfiltered_imputed.vcf',10000) 
 
 
 read.vcf.genotypes <- function(filename,max.marker) {
@@ -145,5 +145,5 @@ read.vcf.genotypes <- function(filename,max.marker) {
 
 
 #command for Parnassius clodius, number refers to loci
-geno <- read.vcf.genotypes(filename='SNPdata/parnassius_clodius_unfiltered_imputed.vcf',1001)
+geno <- read.vcf.genotypes(filename='data/parnassius_clodius_unfiltered_imputed.vcf',1001)
 geno <- t(geno)
