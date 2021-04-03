@@ -47,13 +47,15 @@ pop_code <- read.gdsn(index.gdsn(genofile, path = "sample.annot"))
 length(unique(pop_code))
 table(pop_code)
 
-# LD-based SNP pruning
-set.seed(926)
-snpset <- snpgdsLDpruning(genofile,ld.threshold = 0.2, autosome.only = F)
-snp_id <- unlist(snpset)
-str(snpset)
-snpset_id <- unlist(unname(snpset))
 sample_id <- read.gdsn(index.gdsn(genofile, "sample.id"))
+
+# # LD-based SNP pruning
+# set.seed(926)
+# snpset <- snpgdsLDpruning(genofile,ld.threshold = 0.2, autosome.only = F)
+# snp_id <- unlist(snpset)
+# str(snpset)
+# snpset_id <- unlist(unname(snpset))
+
 
 # Run PCA
 pca_run <- snpgdsPCA(genofile, snp.id = snpset_id, num.thread=2, autosome.only = F)
