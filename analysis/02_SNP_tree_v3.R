@@ -10,17 +10,16 @@ load("data/pop_data_n146.Rdata")
 snpdata <- read.vcf("data/parnassius_clodius_unfiltered_imputed.vcf")
 snpdata_gen <- df2genind(snpdata, ploidy = 2, sep = "/")
 #summary(snpdata_gen)
-snpdata_df <- genind2df(snpdata_gen)
+#snpdata_df <- genind2df(snpdata_gen)
 #snpdata_matrix <- as.matrix(snpdata_df)
 
 # convert to genpop object including population information
 id_order <- rownames(snpdata)
 ordered_pops <- mydat$SiteID[order(match(mydat$SampleID,id_order))]
 snpdata_genpop <- genind2genpop(x = snpdata_gen, pop = ordered_pops, quiet = FALSE)
-snpdata_df <- as.data.frame(cbind(ordered_pops, snpdata_df))
 rm(id_order, ordered_pops)
 
-# calculate population distances
+# calculate population distances using Nei
 pop_dist <- dist.genpop(snpdata_genpop, method = 1, diag = T, upper = T)
   # method = 1 is nei's distance
 pop_dist_df <- as.data.frame(as.matrix(pop_dist))
@@ -75,4 +74,9 @@ boot_nj
 write.table(boot_nj, file = "output/nj_tree_boot_support.txt")
 
 rm(upgma_tree, boot_nj)
+
+
+## Other distance metrics
+
+  # https://rdrr.io/cran/adegenet/man/dist.genpop.html
 
