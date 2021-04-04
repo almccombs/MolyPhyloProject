@@ -1,8 +1,10 @@
 #https://markravinet.github.io/Chapter9.html
+# file:///C:/Users/AUDREY~1/AppData/Local/Temp/practical-introphylo.1.0.pdf
 
 library(adegenet)
 library(pegas)
 library(ggplot2)
+library(phangorn)
 
 load("data/pop_data_n146.Rdata")
 
@@ -10,12 +12,13 @@ snpdata <- read.vcf("data/parnassius_clodius_unfiltered_imputed.vcf")
 snpdata_gen <- df2genind(snpdata, ploidy = 2, sep = "/")
 #summary(snpdata_gen)
 snpdata_df <- genind2df(snpdata_gen)
-snpdata_matrix <- as.matrix(snpdata_df)
+#snpdata_matrix <- as.matrix(snpdata_df)
 
 # convert to genpop object including population information
 id_order <- rownames(snpdata)
 ordered_pops <- mydat$SiteID[order(match(mydat$SampleID,id_order))]
 snpdata_genpop <- genind2genpop(x = snpdata_gen, pop = ordered_pops, quiet = FALSE)
+snpdata_df <- as.data.frame(cbind(ordered_pops, snpdata_df))
 rm(id_order, ordered_pops)
 
 # calculate population distances
@@ -34,7 +37,7 @@ ggplot(heatmap_df, aes(x = pop1, y = pop2, fill = dist)) +
   scale_fill_gradient2(low = "white", high = "#008080") +
   xlab("") + ylab("") +
   theme(axis.text.x = element_text(angle = 90))
-rm(heatmap_df)
+rm(heatmap_df, pop_dist_df)
 
 # Make a NJ tree
 nj_tree <- nj(pop_dist)
@@ -69,7 +72,5 @@ boot_nj <- boot.phylo(nj_tree, pop_dist_matrix, FUN = nj, B = 1000, rooted = F)
 boot_nj
 write.table(boot_nj, file = "output/nj_tree_boot_support.txt")
 
-
-
-### ML distances
+rm(upgma_tree, boot_nj)
 
