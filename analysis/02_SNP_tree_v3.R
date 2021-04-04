@@ -31,11 +31,14 @@ heatmap_df <- reshape2::melt(pop_dist_df)
 names(heatmap_df) <- c("pop1", "dist")
 heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 29)
 heatmap_df <- heatmap_df[,c("pop1", "pop2", "dist")]
+
+png(filename = "output/distance_heatmap.png", width = 7.5, height = 7.5, units = "in", res = 300)
 ggplot(heatmap_df, aes(x = pop1, y = pop2, fill = dist)) +
   geom_tile() +
   scale_fill_gradient2(low = "white", high = "#008080") +
   xlab("") + ylab("") +
   theme(axis.text.x = element_text(angle = 90))
+dev.off()
 rm(heatmap_df, pop_dist_df)
 
 # Make a NJ tree
@@ -44,7 +47,7 @@ png(filename = "output/nj_tree_unrooted.png", width = 10, height = 7.5, units = 
 plot(nj_tree, type = "unrooted", use.edge.length = T, cex = .5)
 dev.off()
   # write in Newick format
-write.tree(nj_tree, file = "data/nj_tree.txt")
+write.tree(nj_tree, file = "output/nj_tree.txt")
 
   # Use cophenetic to check
 x <- as.vector(pop_dist)
@@ -58,7 +61,7 @@ png(filename = "output/upgma_tree.png", width = 10, height = 7.5, units = "in", 
 plot(upgma_tree)
 dev.off()
   # write in Newick format
-write.tree(upgma_tree, file = "data/nupgma_tree.txt")
+write.tree(upgma_tree, file = "output/upgma_tree.txt")
 
   # Use cophenetic to check
 y <- as.vector(as.dist(cophenetic(upgma_tree)))
