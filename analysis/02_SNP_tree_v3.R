@@ -4,7 +4,6 @@
 library(adegenet)
 library(pegas)
 library(ggplot2)
-library(phangorn)
 
 load("data/pop_data_n146.Rdata")
 
