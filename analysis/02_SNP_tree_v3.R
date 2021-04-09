@@ -52,13 +52,14 @@ write.tree(nj_tree, file = "output/nj_tree.txt")
 x <- as.vector(pop_dist)
 y <- as.vector(as.dist(cophenetic(nj_tree)))
 qplot(x, y)
+  # This plots the population distance against the distance given by the dendrogram
 
 
 # Make a UPGMA tree
 upgma_tree <- as.phylo(hclust(pop_dist, method = "average"))
-png(filename = "output/upgma_tree.png", width = 10, height = 7.5, units = "in", res = 300)
+#png(filename = "output/upgma_tree.png", width = 10, height = 7.5, units = "in", res = 300)
 plot(upgma_tree)
-dev.off()
+#dev.off()
   # write in Newick format
 write.tree(upgma_tree, file = "output/upgma_tree.txt")
 
@@ -75,8 +76,128 @@ write.table(boot_nj, file = "output/nj_tree_boot_support.txt")
 
 rm(upgma_tree, boot_nj)
 
+rm(nj_tree, pop_dist_matrix, pop_dist)
+
+
 
 ## Other distance metrics
 
   # https://rdrr.io/cran/adegenet/man/dist.genpop.html
+
+# calculate population distances using Coancestry coefficient (Reynolds' distance)
+pop_dist <- dist.genpop(snpdata_genpop, method = 3, diag = T, upper = T)
+  # method = 3 is Reynolds' distance
+pop_dist_df <- as.data.frame(as.matrix(pop_dist))
+pop_dist_matrix <- as.matrix(pop_dist)
+
+# Plot a heat map
+heatmap_df <- reshape2::melt(pop_dist_df)
+names(heatmap_df) <- c("pop1", "dist")
+heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 29)
+heatmap_df <- heatmap_df[,c("pop1", "pop2", "dist")]
+
+png(filename = "output/distance_heatmap_reynolds.png", width = 7.5, height = 7.5, units = "in", res = 300)
+ggplot(heatmap_df, aes(x = pop1, y = pop2, fill = dist)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "white", high = "#008080") +
+  xlab("") + ylab("") +
+  theme(axis.text.x = element_text(angle = 90))
+dev.off()
+rm(heatmap_df, pop_dist_df)
+
+# Make a NJ tree
+nj_tree <- nj(pop_dist)
+png(filename = "output/nj_tree_unrooted_reynolds.png", width = 10, height = 7.5, units = "in", res = 300)
+plot(nj_tree, type = "unrooted", use.edge.length = T, cex = .5)
+dev.off()
+# write in Newick format
+write.tree(nj_tree, file = "output/nj_tree_reynolds.txt")
+
+# Use cophenetic to check
+x <- as.vector(pop_dist)
+y <- as.vector(as.dist(cophenetic(nj_tree)))
+qplot(x, y)
+
+
+# Make a UPGMA tree
+upgma_tree <- as.phylo(hclust(pop_dist, method = "average"))
+#png(filename = "output/upgma_tree.png", width = 10, height = 7.5, units = "in", res = 300)
+plot(upgma_tree)
+#dev.off()
+# write in Newick format
+write.tree(upgma_tree, file = "output/upgma_tree_reynolds.txt")
+
+# Use cophenetic to check
+y <- as.vector(as.dist(cophenetic(upgma_tree)))
+qplot(x, y)
+rm(x,y)
+
+
+## Bootstrap
+boot_nj <- boot.phylo(nj_tree, pop_dist_matrix, FUN = nj, B = 1000, rooted = F)
+boot_nj
+write.table(boot_nj, file = "output/nj_tree_boot_support_reynolds.txt")
+
+rm(upgma_tree, boot_nj)
+
+rm(nj_tree, pop_dist_matrix, pop_dist)
+
+
+# calculate population distances using absolute genetic distance (Provesti's distance)
+pop_dist <- dist.genpop(snpdata_genpop, method = 5, diag = T, upper = T)
+  # method = 5 is Provesti's distance
+pop_dist_df <- as.data.frame(as.matrix(pop_dist))
+pop_dist_matrix <- as.matrix(pop_dist)
+
+# Plot a heat map
+heatmap_df <- reshape2::melt(pop_dist_df)
+names(heatmap_df) <- c("pop1", "dist")
+heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 29)
+heatmap_df <- heatmap_df[,c("pop1", "pop2", "dist")]
+
+png(filename = "output/distance_heatmap_provesti.png", width = 7.5, height = 7.5, units = "in", res = 300)
+ggplot(heatmap_df, aes(x = pop1, y = pop2, fill = dist)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "white", high = "#008080") +
+  xlab("") + ylab("") +
+  theme(axis.text.x = element_text(angle = 90))
+dev.off()
+rm(heatmap_df, pop_dist_df)
+
+# Make a NJ tree
+nj_tree <- nj(pop_dist)
+png(filename = "output/nj_tree_unrooted_provesti.png", width = 10, height = 7.5, units = "in", res = 300)
+plot(nj_tree, type = "unrooted", use.edge.length = T, cex = .5)
+dev.off()
+# write in Newick format
+write.tree(nj_tree, file = "output/nj_tree_provesti.txt")
+
+# Use cophenetic to check
+x <- as.vector(pop_dist)
+y <- as.vector(as.dist(cophenetic(nj_tree)))
+qplot(x, y)
+
+
+# Make a UPGMA tree
+upgma_tree <- as.phylo(hclust(pop_dist, method = "average"))
+#png(filename = "output/upgma_tree.png", width = 10, height = 7.5, units = "in", res = 300)
+plot(upgma_tree)
+#dev.off()
+# write in Newick format
+write.tree(upgma_tree, file = "output/upgma_tree_provesti.txt")
+
+# Use cophenetic to check
+y <- as.vector(as.dist(cophenetic(upgma_tree)))
+qplot(x, y)
+rm(x,y)
+
+
+## Bootstrap
+boot_nj <- boot.phylo(nj_tree, pop_dist_matrix, FUN = nj, B = 1000, rooted = F)
+boot_nj
+write.table(boot_nj, file = "output/nj_tree_boot_support_provesti.txt")
+
+rm(upgma_tree, boot_nj)
+
+rm(nj_tree, pop_dist_matrix, pop_dist)
 
