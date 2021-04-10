@@ -22,14 +22,17 @@ rm(id_order, ordered_pops)
 
 
 #### Nei's distance (drift + mutation)
-
 pop_dist_nei <- dist.genpop(snpdata_genpop, method = 1, diag = T, upper = T)
   # method = 1 is nei's distance
-pop_dist_nei_df <- as.data.frame(as.matrix(pop_dist_nei))
-pop_dist_nei_matrix <- as.matrix(pop_dist_nei)
+pop_dist_nei_df <- as.data.frame(as.matrix(pop_dist_nei, labels = T))
+pop_dist_nei_matrix <- as.matrix(pop_dist_nei, labels = T)
 
   # save distance matrix for later analysis
 save(pop_dist_nei_matrix, file = "output/nei_popdist_matrix.Rdata")
+  # save site names to match order later
+nei_site_order <- colnames(pop_dist_nei_matrix)
+save(nei_site_order, file = "output/nei_site_order.Rdata")
+rm(nei_site_order)
 
 
   # Plot a heat map
@@ -57,44 +60,49 @@ rm(heatmap_df, pop_dist_nei_df)
   # Make a NJ tree
 nj_tree <- nj(pop_dist_nei)
 plot(nj_tree, type = "unrooted", use.edge.length = T, cex = .5)
-  # write in Newick format
-write.tree(nj_tree, file = "output/nei_nj_tree_newick.txt")
 
   # Use cophenetic to check
 x <- as.vector(pop_dist_nei)
 y_nj <- as.vector(as.dist(cophenetic(nj_tree)))
-coph_nj <- ggplot(data = NULL, aes(x, y_nj)) + geom_point() +
+plot_df <- as.data.frame(cbind(x, y_nj))
+coph_nj_nei <- ggplot(data = plot_df, aes(x, y_nj)) + geom_point() +
   xlab("population distance") + ylab("tree distance") +
   labs(title = "Cophenetic Plot: Nei's Distance",
        subtitle = "Neighbor-Joining Tree")
   # This plots the population distance against the distance given by the dendrogram
-coph_nj
-save(coph_nj, file = "output/nei_nj_cophenetic_plot_object.Rdata")
+coph_nj_nei
+save(coph_nj_nei, file = "output/nei_nj_cophenetic_plot_object.Rdata")
 
   # Make a UPGMA tree
 upgma_tree <- as.phylo(hclust(pop_dist_nei, method = "average"))
 plot(upgma_tree)
   # write in Newick format
+write.tree(upgma_tree, file = "output/nei_upgma_tree_newick.Rdata")
 write.tree(upgma_tree, file = "output/nei_upgma_tree_newick.txt")
 
   # Use cophenetic to check
 y_upgma <- as.vector(as.dist(cophenetic(upgma_tree)))
-coph_upgma <- ggplot(data = NULL, aes(x, y_upgma)) + geom_point() +
+plot_df <- as.data.frame(cbind(x, y_upgma))
+coph_upgma_nei <- ggplot(data = plot_df, aes(x, y_upgma)) + geom_point() +
   xlab("population distance") + ylab("tree distance") +
   labs(title = "Cophenetic Plot: Nei's Distance",
        subtitle = "UPGMA Tree")
   # This plots the population distance against the distance given by the dendrogram
-coph_upgma
-save(coph_upgma, file = "output/nei_upgma_cophenetic_plot_object.Rdata")
+coph_upgma_nei
+save(coph_upgma_nei, file = "output/nei_upgma_cophenetic_plot_object.Rdata")
 
-grid.arrange(coph_nj, coph_upgma, ncol = 2)
+grid.arrange(coph_nj_nei, coph_upgma_nei, ncol = 2)
 
   # Bootstrap
 boot_nj <- boot.phylo(nj_tree, pop_dist_nei_matrix, FUN = nj, B = 1000, rooted = F)
 boot_nj
-write.table(boot_nj, file = "output/nei_nj_tree_boot_newick.txt")
+nj_tree$node.label <- boot_nj
 
-rm(coph_nj, coph_upgma, heatmap_nei, nj_tree, pop_dist_nei_matrix, upgma_tree, boot_nj, pop_dist_nei, x, y_nj, y_upgma)
+# write in Newick format, with bootstrap support
+write.tree(nj_tree, file = "output/nei_nj_tree_newick.txt")
+write.tree(nj_tree, file = "output/nei_nj_tree_newick.Rdata")
+
+rm(plot_df, coph_nj_nei, coph_upgma_nei, heatmap_nei, nj_tree, pop_dist_nei_matrix, upgma_tree, boot_nj, pop_dist_nei, x, y_nj, y_upgma)
 
 
 
@@ -108,7 +116,10 @@ pop_dist_reynolds_matrix <- as.matrix(pop_dist_reynolds)
 
   # save distance matrix for later analysis
 save(pop_dist_reynolds_matrix, file = "output/reynolds_popdist_matrix.Rdata")
-
+  # save site names to match order later
+reynolds_site_order <- colnames(pop_dist_reynolds_matrix)
+save(reynolds_site_order, file = "output/reynolds_site_order.Rdata")
+rm(reynolds_site_order) # the order of sites is the same for the Nei and Reynolds dist matrices
 
   # Plot a heat map
 heatmap_df <- reshape2::melt(pop_dist_reynolds_df)
@@ -135,41 +146,51 @@ rm(heatmap_df, pop_dist_reynolds_df)
   # Make a NJ tree
 nj_tree <- nj(pop_dist_reynolds)
 plot(nj_tree, type = "unrooted", use.edge.length = T, cex = .5)
-  # write in Newick format
-write.tree(nj_tree, file = "output/reynolds_nj_tree_newick.txt")
 
 # Use cophenetic to check
 x <- as.vector(pop_dist_reynolds)
 y_nj <- as.vector(as.dist(cophenetic(nj_tree)))
-coph_nj <- ggplot(data = NULL, aes(x, y_nj)) + geom_point() +
+plot_df <- as.data.frame(cbind(x, y_nj))
+coph_nj_reynolds <- ggplot(data = plot_df,
+                           aes(x, y_nj)) + geom_point() +
   xlab("population distance") + ylab("tree distance") +
   labs(title = "Cophenetic Plot: Reynolds' Distance",
        subtitle = "Neighbor-Joining Tree")
   # This plots the population distance against the distance given by the dendrogram
-coph_nj
-save(coph_nj, file = "output/reynolds_nj_cophenetic_plot_object.Rdata")
+coph_nj_reynolds
+save(coph_nj_reynolds, file = "output/reynolds_nj_cophenetic_plot_object.Rdata")
 
   # Make a UPGMA tree
 upgma_tree <- as.phylo(hclust(pop_dist_reynolds, method = "average"))
 plot(upgma_tree)
   # write in Newick format
+write.tree(upgma_tree, file = "output/reynolds_upgma_tree_newick.Rdata")
 write.tree(upgma_tree, file = "output/reynolds_upgma_tree_newick.txt")
 
 # Use cophenetic to check
 y_upgma <- as.vector(as.dist(cophenetic(upgma_tree)))
-coph_upgma <- ggplot(data = NULL, aes(x, y_upgma)) + geom_point() +
+plot_df <- as.data.frame(cbind(x, y_upgma))
+coph_upgma_reynolds <- ggplot(data = plot_df,
+                              aes(x, y_upgma)) +
+  geom_point() +
   xlab("population distance") + ylab("tree distance") +
   labs(title = "Cophenetic Plot: Reynolds' Distance",
        subtitle = "UPGMA Tree")
 # This plots the population distance against the distance given by the dendrogram
-coph_upgma
-save(coph_upgma, file = "output/reynolds_upgma_cophenetic_plot_object.Rdata")
+coph_upgma_reynolds
+save(coph_upgma_reynolds, file = "output/reynolds_upgma_cophenetic_plot_object.Rdata")
 
-grid.arrange(coph_nj, coph_upgma, ncol = 2)
+grid.arrange(coph_nj_reynolds, coph_upgma_reynolds, ncol = 2)
 
   # Bootstrap
 boot_nj <- boot.phylo(nj_tree, pop_dist_reynolds_matrix, FUN = nj, B = 1000, rooted = F)
 boot_nj
-write.table(boot_nj, file = "output/reynolds_nj_tree_boot_newick.txt")
+nj_tree$node.label <- boot_nj
+# write in Newick format
+write.tree(nj_tree, file = "output/reynolds_nj_tree_newick.Rdata")
+write.tree(nj_tree, file = "output/reynolds_nj_tree_newick.txt")
 
-rm(coph_nj, coph_upgma, heatmap_reynolds, nj_tree, pop_dist_reynolds_matrix, upgma_tree, boot_nj, pop_dist_reynolds, x, y_nj, y_upgma)
+rm(plot_df, coph_nj_reynolds, coph_upgma_reynolds, heatmap_reynolds, nj_tree, pop_dist_reynolds_matrix, upgma_tree, boot_nj, pop_dist_reynolds, x, y_nj, y_upgma)
+
+
+
