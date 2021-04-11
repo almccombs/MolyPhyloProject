@@ -49,6 +49,10 @@ png(filename = "figures/Rtrees/nei_nj.png", width = 10, height = 7.5, units = "i
 plot(nei_nj, type = "unrooted", cex = .75, use.edge.length = F, lab4ut = "axial", no.margin =T)
 dev.off()
 
+cairo_ps(filename = "figures/Rtrees/nei_nj.eps", width = 10, height = 7.5)
+plot(nei_nj, type = "unrooted", cex = .75, use.edge.length = F, lab4ut = "axial", no.margin =T)
+dev.off()
+
 png(filename = "figures/Rtrees/nei_upgma.png", width = 10, height = 7.5, units = "in", res = 300)
 plot(nei_upgma, type = "unrooted", cex = .75, use.edge.length = F, lab4ut = "axial", no.margin =T)
 dev.off()
@@ -56,6 +60,11 @@ dev.off()
 png(filename = "figures/Rtrees/reynolds_nj.png", width = 10, height = 7.5, units = "in", res = 300)
 plot(reynolds_nj, type = "unrooted", cex = .75, use.edge.length = F, lab4ut = "axial", no.margin =T)
 dev.off()
+
+cairo_ps(filename = "figures/Rtrees/reynolds_nj.eps", width = 10, height = 7.5)
+plot(reynolds_nj, type = "unrooted", cex = .75, use.edge.length = F, lab4ut = "axial", no.margin =T)
+dev.off()
+
 
 png(filename = "figures/Rtrees/reynolds_upgma.png", width = 10, height = 7.5, units = "in", res = 300)
 plot(reynolds_upgma, type = "unrooted", cex = .75, use.edge.length = F, lab4ut = "axial", no.margin =T)
