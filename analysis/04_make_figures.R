@@ -3,7 +3,6 @@ library(gridExtra)
 library(ape)
 library(phytools)
 
-
 # Heatmap figure
 load("output/nei_heatmap_plot_object.Rdata")
 load("output/reynolds_heatmap_plot_object.Rdata")

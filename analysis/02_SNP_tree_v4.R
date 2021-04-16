@@ -6,7 +6,7 @@ library(pegas)
 library(ggplot2)
 library(gridExtra)
 
-load("data/pop_data_n146.Rdata")
+load("data/pop_data_n142.Rdata")
 
 snpdata <- read.vcf("data/parnassius_clodius_unfiltered_imputed.vcf")
 snpdata_gen <- df2genind(snpdata, ploidy = 2, sep = "/")
@@ -14,11 +14,16 @@ snpdata_gen <- df2genind(snpdata, ploidy = 2, sep = "/")
 #snpdata_df <- genind2df(snpdata_gen)
 #snpdata_matrix <- as.matrix(snpdata_df)
 
+# remove 4 individuals from sites with only 1 or 2 samples
+rm_ids <- rownames(snpdata)[!rownames(snpdata) %in% mydat$SampleID]
+snpdata <- snpdata[which(!rownames(snpdata) %in% rm_ids),]
+snpdata_gen <- snpdata_gen[!rownames(snpdata_gen@tab) %in% rm_ids]
+
 # convert to genpop object including population information
 id_order <- rownames(snpdata)
 ordered_pops <- mydat$SiteID[order(match(mydat$SampleID,id_order))]
 snpdata_genpop <- genind2genpop(x = snpdata_gen, pop = ordered_pops, quiet = FALSE)
-rm(id_order, ordered_pops)
+rm(id_order, ordered_pops, rm_ids)
 
 
 #### Nei's distance (drift + mutation)
@@ -38,7 +43,7 @@ rm(nei_site_order)
   # Plot a heat map
 heatmap_df <- reshape2::melt(pop_dist_nei_df)
 names(heatmap_df) <- c("pop1", "dist")
-heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 29)
+heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 26)
 heatmap_df <- heatmap_df[,c("pop1", "pop2", "dist")]
 
 heatmap_nei <- ggplot(heatmap_df, aes(x = pop1, y = pop2, fill = dist)) +
@@ -124,7 +129,7 @@ rm(reynolds_site_order) # the order of sites is the same for the Nei and Reynold
   # Plot a heat map
 heatmap_df <- reshape2::melt(pop_dist_reynolds_df)
 names(heatmap_df) <- c("pop1", "dist")
-heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 29)
+heatmap_df$pop2 <- rep(unique(heatmap_df$pop1), 26)
 heatmap_df <- heatmap_df[,c("pop1", "pop2", "dist")]
 
 heatmap_reynolds <- ggplot(heatmap_df, aes(x = pop1, y = pop2, fill = dist)) +
@@ -191,6 +196,4 @@ write.tree(nj_tree, file = "output/reynolds_nj_tree_newick.Rdata")
 write.tree(nj_tree, file = "output/reynolds_nj_tree_newick.txt")
 
 rm(plot_df, coph_nj_reynolds, coph_upgma_reynolds, heatmap_reynolds, nj_tree, pop_dist_reynolds_matrix, upgma_tree, boot_nj, pop_dist_reynolds, x, y_nj, y_upgma)
-
-
 

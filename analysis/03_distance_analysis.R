@@ -3,7 +3,7 @@ library(ape)
 library(ggplot2)
 library(gridExtra)
 
-load("data/pop_data_n146.Rdata")
+load("data/pop_data_n142.Rdata")
 load("output/nei_site_order.Rdata")
 sites <- mydat[match(unique(mydat$SiteID), mydat$SiteID),]
 sites <- sites[match(nei_site_order, sites$SiteID),]
@@ -47,4 +47,4 @@ grid.arrange(nei_to_geo, reynolds_to_geo, nei_to_reynolds, nrow = 2)
 dev.off()
 
 summary(lm(reynolds_dist ~ nei_dist))
-  # Adj R^2 = 0.8832
+  # Adj R^2 = 0.7815
