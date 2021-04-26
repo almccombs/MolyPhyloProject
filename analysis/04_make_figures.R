@@ -25,15 +25,23 @@ load("output/nei_upgma_cophenetic_plot_object.Rdata")
 load("output/reynolds_nj_cophenetic_plot_object.Rdata")
 load("output/reynolds_upgma_cophenetic_plot_object.Rdata")
 
-coph_nj_reynolds <- coph_nj_reynolds + labs(title = "Reynolds' Distance",
-                                  subtitle = "Neighbor-Joining Tree")
+coph_nj_nei <- coph_nj_nei + labs(title = "Nei's",
+                   subtitle = "NJ Tree")
+
+coph_nj_reynolds <- coph_nj_reynolds + labs(title = "Reynolds'",
+                                  subtitle = "NJ Tree") +
+  ylab("")
 coph_upgma_nei <- coph_upgma_nei + labs(title = "", subtitle = "UPGMA Tree") +
   ylab("")
 coph_upgma_reynolds <- coph_upgma_reynolds + labs(title = "", subtitle = "UPGMA Tree") +
   ylab("")
 
-png(filename = "figures/cophenetics.png", width = 7.5, height = 7.5, units = "in", res = 300)
+png(filename = "figures/cophenetics_square.png", width = 7.5, height = 7.5, units = "in", res = 300)
 grid.arrange(coph_nj_nei, coph_upgma_nei, coph_nj_reynolds, coph_upgma_reynolds, nrow = 2)
+dev.off()
+
+png(filename = "figures/cophenetics.png", width = 8, height = 2.5, units = "in", res = 300)
+grid.arrange(coph_nj_nei, coph_upgma_nei, coph_nj_reynolds, coph_upgma_reynolds, nrow = 1)
 dev.off()
 
 rm(coph_nj_nei, coph_nj_reynolds, coph_upgma_nei, coph_upgma_reynolds)

@@ -42,8 +42,9 @@ nei_to_reynolds
 mantel.test(m1 = pop_dist_nei_matrix, m2 = pop_dist_reynolds_matrix, nperm = 9999)
 
 # Save figure
-png(filename = "figures/distance_comparisons.png", width = 7.5, height = 7.5, units = "in", res = 300)
-grid.arrange(nei_to_geo, reynolds_to_geo, nei_to_reynolds, nrow = 2)
+#png(filename = "figures/distance_comparisons.png", width = 7.5, height = 7.5, units = "in", res = 300)
+png(filename = "figures/distance_comparisons.png", width = 8, height = 2.5, units = "in", res = 300)
+grid.arrange(nei_to_geo, reynolds_to_geo, nei_to_reynolds, nrow = 1)
 dev.off()
 
 summary(lm(reynolds_dist ~ nei_dist))
